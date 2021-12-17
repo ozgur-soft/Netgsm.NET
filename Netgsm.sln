@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Netgsm", "Netgsm\Netgsm.csproj", "{F537C0C8-94FA-486C-9309-A3C6994D70DB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F537C0C8-94FA-486C-9309-A3C6994D70DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F537C0C8-94FA-486C-9309-A3C6994D70DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F537C0C8-94FA-486C-9309-A3C6994D70DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F537C0C8-94FA-486C-9309-A3C6994D70DB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {08344BEE-898A-4476-8E6E-C34AD8ACBCCA}
+	EndGlobalSection
+EndGlobal
