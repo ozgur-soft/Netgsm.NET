@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Text;
+﻿using System.Text;
 using System.Web;
 using System.Xml;
 using System.Xml.Linq;
@@ -13,12 +12,9 @@ namespace Netgsm {
         Netgsm.XML Otp(long phone, string header, string message);
     }
     public class Netgsm : INetgsm {
-        private ILogger<Netgsm> Logger { get; }
         private string Usercode { get; set; }
         private string Password { get; set; }
-        public Netgsm(ILogger<Netgsm> logger) {
-            Logger = logger;
-        }
+        public Netgsm() { }
         [Serializable, XmlRoot("mainbody")]
         public class MainBody {
             [XmlElement("header", IsNullable = false)]
@@ -104,9 +100,9 @@ namespace Netgsm {
                 }
             } catch (Exception err) {
                 if (err.InnerException != null) {
-                    Logger.LogError(err.InnerException.Message);
+                    Console.WriteLine(err.InnerException.Message);
                 } else {
-                    Logger.LogError(err.Message);
+                    Console.WriteLine(err.Message);
                 }
             }
             return null;
@@ -139,9 +135,9 @@ namespace Netgsm {
                 return result;
             } catch (Exception err) {
                 if (err.InnerException != null) {
-                    Logger.LogError(err.InnerException.Message);
+                    Console.WriteLine(err.InnerException.Message);
                 } else {
-                    Logger.LogError(err.Message);
+                    Console.WriteLine(err.Message);
                 }
             }
             return null;
