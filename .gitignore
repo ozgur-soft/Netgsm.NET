@@ -4,3 +4,5 @@
 [Kk]eys/
 .vs/
 .vscode/
+*.token
+*.config
