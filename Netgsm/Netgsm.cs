@@ -6,6 +6,8 @@ using System.Xml.Serialization;
 
 namespace Netgsm {
     public interface INetgsm {
+        void SetUsercode(string usercode);
+        void SetPassword(string password);
         Netgsm.XML Sms(string header, string phone, string message, string startdate = "", string stopdate = "");
         Netgsm.XML Otp(string header, string phone, string message);
     }
