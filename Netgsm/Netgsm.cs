@@ -6,15 +6,16 @@ using System.Xml.Serialization;
 
 namespace Netgsm {
     public interface INetgsm {
-        void SetUsercode(string usercode);
-        void SetPassword(string password);
-        Netgsm.XML Sms(long phone, string header, string message);
-        Netgsm.XML Otp(long phone, string header, string message);
+        Netgsm.XML Sms(string header, string phone, string message, string startdate = null, string stopdate = null);
+        Netgsm.XML Otp(string header, string phone, string message);
     }
     public class Netgsm : INetgsm {
-        private string Usercode { get; set; }
-        private string Password { get; set; }
-        public Netgsm() { }
+        private string Usercode { init; get; }
+        private string Password { init; get; }
+        public Netgsm(string usercode, string password) {
+            Usercode = usercode;
+            Password = password;
+        }
         [Serializable, XmlRoot("mainbody")]
         public class MainBody {
             [XmlElement("header", IsNullable = false)]
@@ -58,20 +59,16 @@ namespace Netgsm {
         public class Writer : StringWriter {
             public override Encoding Encoding => Encoding.UTF8;
         }
-        public void SetUsercode(string usercode) {
-            Usercode = usercode;
-        }
-        public void SetPassword(string password) {
-            Password = password;
-        }
-        public XML Sms(long phone, string header, string message) {
+        public XML Sms(string header, string phone, string message, string startdate = null, string stopdate = null) {
             var data = new MainBody {
                 Header = new Header {
                     Company = "Netgsm",
                     Type = "1:n",
                     Usercode = Usercode,
                     Password = Password,
-                    MsgHeader = header
+                    MsgHeader = header,
+                    StartDate = startdate,
+                    StopDate = stopdate
                 },
                 Body = new Body {
                     No = phone.ToString(),
@@ -107,7 +104,7 @@ namespace Netgsm {
             }
             return null;
         }
-        public XML Otp(long phone, string header, string message) {
+        public XML Otp(string header, string phone, string message) {
             var data = new MainBody {
                 Header = new Header {
                     Usercode = Usercode,
