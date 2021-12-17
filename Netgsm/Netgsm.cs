@@ -9,49 +9,49 @@ namespace Netgsm {
     public interface INetgsm {
         void SetUsercode(string usercode);
         void SetPassword(string password);
-        Netgsm.XML? Sms(long phone, string header, string message);
-        Netgsm.XML? Otp(long phone, string header, string message);
+        Netgsm.XML Sms(long phone, string header, string message);
+        Netgsm.XML Otp(long phone, string header, string message);
     }
     public class Netgsm : INetgsm {
         private ILogger<Netgsm> Logger { get; }
-        private string? Usercode { get; set; }
-        private string? Password { get; set; }
+        private string Usercode { get; set; }
+        private string Password { get; set; }
         public Netgsm(ILogger<Netgsm> logger) {
             Logger = logger;
         }
         [Serializable, XmlRoot("mainbody")]
         public class MainBody {
             [XmlElement("header", IsNullable = false)]
-            public Header? Header { init; get; }
+            public Header Header { init; get; }
             [XmlElement("body", IsNullable = false)]
-            public Body? Body { init; get; }
+            public Body Body { init; get; }
         }
         public class Header {
             [XmlElement("company", IsNullable = false)]
-            public string? Company { init; get; }
+            public string Company { init; get; }
             [XmlElement("type", IsNullable = false)]
-            public string? Type { init; get; }
+            public string Type { init; get; }
             [XmlElement("usercode", IsNullable = false)]
-            public string? Usercode { init; get; }
+            public string Usercode { init; get; }
             [XmlElement("password", IsNullable = false)]
-            public string? Password { init; get; }
+            public string Password { init; get; }
             [XmlElement("msgheader", IsNullable = false)]
-            public string? MsgHeader { init; get; }
+            public string MsgHeader { init; get; }
             [XmlElement("startdate", IsNullable = false)]
-            public string? StartDate { init; get; }
+            public string StartDate { init; get; }
             [XmlElement("stopdate", IsNullable = false)]
-            public string? StopDate { init; get; }
+            public string StopDate { init; get; }
         }
         public class Body {
             [XmlElement("msg", IsNullable = false)]
-            public string? Msg { init; get; }
+            public string Msg { init; get; }
             [XmlElement("no", IsNullable = false)]
-            public string? No { init; get; }
+            public string No { init; get; }
         }
         [Serializable, XmlRoot("xml")]
         public class XML {
             [XmlElement("main", IsNullable = false)]
-            public Main? Main { init; get; }
+            public Main Main { init; get; }
         }
         public class Main {
             [XmlElement("code", IsNullable = false)]
@@ -68,7 +68,7 @@ namespace Netgsm {
         public void SetPassword(string password) {
             Password = password;
         }
-        public XML? Sms(long phone, string header, string message) {
+        public XML Sms(long phone, string header, string message) {
             var data = new MainBody {
                 Header = new Header {
                     Company = "Netgsm",
@@ -111,7 +111,7 @@ namespace Netgsm {
             }
             return null;
         }
-        public XML? Otp(long phone, string header, string message) {
+        public XML Otp(long phone, string header, string message) {
             var data = new MainBody {
                 Header = new Header {
                     Usercode = Usercode,
@@ -135,7 +135,7 @@ namespace Netgsm {
                     Content = new StringContent(HttpUtility.HtmlDecode(writer.ToString()), Encoding.UTF8, "text/xml")
                 };
                 var response = http.Send(request);
-                var result = (XML?)xml.Deserialize(response.Content.ReadAsStream());
+                var result = (XML)xml.Deserialize(response.Content.ReadAsStream());
                 return result;
             } catch (Exception err) {
                 if (err.InnerException != null) {
