@@ -10,12 +10,9 @@ namespace Netgsm {
         Netgsm.XML Otp(string header, string phone, string message);
     }
     public class Netgsm : INetgsm {
-        private string Usercode { init; get; }
-        private string Password { init; get; }
-        public Netgsm(string usercode, string password) {
-            Usercode = usercode;
-            Password = password;
-        }
+        private string Usercode { get; set; }
+        private string Password { get; set; }
+        public Netgsm() { }
         [Serializable, XmlRoot("mainbody")]
         public class MainBody {
             [XmlElement("header", IsNullable = false)]
@@ -58,6 +55,12 @@ namespace Netgsm {
         }
         public class Writer : StringWriter {
             public override Encoding Encoding => Encoding.UTF8;
+        }
+        public void SetUsercode(string usercode) {
+            Usercode = usercode;
+        }
+        public void SetPassword(string password) {
+            Password = password;
         }
         public XML Sms(string header, string phone, string message, string startdate = "", string stopdate = "") {
             var data = new MainBody {
