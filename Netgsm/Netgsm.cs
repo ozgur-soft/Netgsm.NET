@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace Netgsm {
     public interface INetgsm {
-        Netgsm.XML Sms(string header, string phone, string message, string startdate = null, string stopdate = null);
+        Netgsm.XML Sms(string header, string phone, string message, string startdate = "", string stopdate = "");
         Netgsm.XML Otp(string header, string phone, string message);
     }
     public class Netgsm : INetgsm {
@@ -59,7 +59,7 @@ namespace Netgsm {
         public class Writer : StringWriter {
             public override Encoding Encoding => Encoding.UTF8;
         }
-        public XML Sms(string header, string phone, string message, string startdate = null, string stopdate = null) {
+        public XML Sms(string header, string phone, string message, string startdate = "", string stopdate = "") {
             var data = new MainBody {
                 Header = new Header {
                     Company = "Netgsm",
