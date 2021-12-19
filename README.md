@@ -1,4 +1,4 @@
-[![license](https://img.shields.io/:license-mit-blue.svg)](https://github.com/ozgur-soft/Netgsm.NET/blob/master/LICENSE.md)
+[![license](https://img.shields.io/:license-mit-blue.svg)](https://github.com/ozgur-soft/Netgsm.NET/blob/main/LICENSE.md)
 
 # Netgsm.NET
 An easy-to-use netgsm.com.tr API with .NET
