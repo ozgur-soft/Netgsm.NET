@@ -8,6 +8,7 @@ An easy-to-use netgsm.com.tr API with .NET
 dotnet add package Netgsm --version 1.0.2
 ```
 
+# Usage
 ```c#
 using Netgsm;
 
