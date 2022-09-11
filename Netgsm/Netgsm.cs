@@ -98,8 +98,18 @@ namespace Netgsm {
                         Content = new StringContent(HttpUtility.HtmlDecode(Encoding.UTF8.GetString(stream.ToArray())), Encoding.UTF8, "text/xml")
                     };
                     var response = http.Send(request);
-                    var result = (XML)xml.Deserialize(response.Content.ReadAsStream());
-                    return result;
+                    var content = response.Content.ReadAsStream();
+                    using (var reader = new StreamReader(content, Encoding.UTF8)) {
+                        var result = reader.ReadToEnd();
+                        var parse = result.Split(' ');
+                        if (parse.Length == 2) {
+                            if (int.TryParse(parse[0], out var code)) {
+                                return new XML { Main = new() { Code = code, JobID = long.Parse(parse[1]) } };
+                            }
+                        } else if (int.TryParse(result, out var code)) {
+                            return new XML { Main = new() { Code = code } };
+                        }
+                    }
                 } catch (Exception err) {
                     if (err.InnerException != null) {
                         Console.WriteLine(err.InnerException.Message);
