@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System;
+using System.IO;
+using System.Net.Http;
+using System.Text;
 using System.Web;
 using System.Xml;
 using System.Xml.Linq;
@@ -8,13 +11,16 @@ namespace Netgsm {
     public interface INetgsm {
         void SetUsercode(string usercode);
         void SetPassword(string password);
-        Netgsm.XML Sms(string header, string phone, string message, string startdate = "", string stopdate = "");
+        Netgsm.XML Sms(string header, string phone, string message, string startdate = null, string stopdate = null, string filter = null);
         Netgsm.XML Otp(string header, string phone, string message);
     }
     public class Netgsm : INetgsm {
+        private string Endpoint { get; set; }
         private string Usercode { get; set; }
         private string Password { get; set; }
-        public Netgsm() { }
+        public Netgsm() {
+            Endpoint = "https://api.netgsm.com.tr";
+        }
         [Serializable, XmlRoot("mainbody")]
         public class MainBody {
             [XmlElement("header", IsNullable = false)]
@@ -37,6 +43,8 @@ namespace Netgsm {
             public string StartDate { init; get; }
             [XmlElement("stopdate", IsNullable = false)]
             public string StopDate { init; get; }
+            [XmlElement("filter", IsNullable = false)]
+            public string Filter { init; get; }
         }
         public class Body {
             [XmlElement("msg", IsNullable = false)]
@@ -64,7 +72,7 @@ namespace Netgsm {
         public void SetPassword(string password) {
             Password = password;
         }
-        public XML Sms(string header, string phone, string message, string startdate = "", string stopdate = "") {
+        public XML Sms(string header, string phone, string message, string startdate = "", string stopdate = "", string filter = "") {
             var data = new MainBody {
                 Header = new Header {
                     Company = "Netgsm",
@@ -73,38 +81,34 @@ namespace Netgsm {
                     Password = Password,
                     MsgHeader = header,
                     StartDate = startdate,
-                    StopDate = stopdate
+                    StopDate = stopdate,
+                    Filter = filter
                 },
                 Body = new Body {
                     No = phone.ToString(),
                     Msg = new XCData(message).ToString()
                 }
             };
-            var mainbody = new XmlSerializer(typeof(MainBody));
-            var writer = new Writer();
-            var ns = new XmlSerializerNamespaces();
-            ns.Add(string.Empty, string.Empty);
-            mainbody.Serialize(writer, data, ns);
-            try {
-                var http = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Post, "https://api.netgsm.com.tr/sms/send/xml") {
-                    Content = new StringContent(HttpUtility.HtmlDecode(writer.ToString()), Encoding.UTF8, "text/xml")
-                };
-                var response = http.Send(request);
-                var reader = new StreamReader(response.Content.ReadAsStream());
-                var result = reader.ReadToEnd();
-                if (string.IsNullOrEmpty(result)) {
-                    return null;
-                } else if (result.Split(" ").Length == 1) {
-                    return new XML { Main = new Main { Code = int.Parse(result.Split(" ").GetValue(0).ToString()), JobID = 0 } };
-                } else {
-                    return new XML { Main = new Main { Code = int.Parse(result.Split(" ").GetValue(0).ToString()), JobID = long.Parse(result.Split(" ").GetValue(1).ToString()) } };
+            using (var stream = new MemoryStream()) {
+                var xml = new XmlSerializer(typeof(XML));
+                var mainbody = new XmlSerializer(typeof(MainBody));
+                using (var writer = new XmlTextWriter(stream, new UTF8Encoding(false))) {
+                    mainbody.Serialize(writer, data);
                 }
-            } catch (Exception err) {
-                if (err.InnerException != null) {
-                    Console.WriteLine(err.InnerException.Message);
-                } else {
-                    Console.WriteLine(err.Message);
+                try {
+                    var http = new HttpClient();
+                    var request = new HttpRequestMessage(HttpMethod.Post, Endpoint + "/sms/send/xml") {
+                        Content = new StringContent(HttpUtility.HtmlDecode(Encoding.UTF8.GetString(stream.ToArray())), Encoding.UTF8, "text/xml")
+                    };
+                    var response = http.Send(request);
+                    var result = (XML)xml.Deserialize(response.Content.ReadAsStream());
+                    return result;
+                } catch (Exception err) {
+                    if (err.InnerException != null) {
+                        Console.WriteLine(err.InnerException.Message);
+                    } else {
+                        Console.WriteLine(err.Message);
+                    }
                 }
             }
             return null;
@@ -121,25 +125,26 @@ namespace Netgsm {
                     Msg = new XCData(message).ToString()
                 }
             };
-            var mainbody = new XmlSerializer(typeof(MainBody));
-            var xml = new XmlSerializer(typeof(XML));
-            var writer = new Writer();
-            var ns = new XmlSerializerNamespaces();
-            ns.Add(string.Empty, string.Empty);
-            mainbody.Serialize(writer, data, ns);
-            try {
-                var http = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Post, "https://api.netgsm.com.tr/sms/send/otp") {
-                    Content = new StringContent(HttpUtility.HtmlDecode(writer.ToString()), Encoding.UTF8, "text/xml")
-                };
-                var response = http.Send(request);
-                var result = (XML)xml.Deserialize(response.Content.ReadAsStream());
-                return result;
-            } catch (Exception err) {
-                if (err.InnerException != null) {
-                    Console.WriteLine(err.InnerException.Message);
-                } else {
-                    Console.WriteLine(err.Message);
+            using (var stream = new MemoryStream()) {
+                var xml = new XmlSerializer(typeof(XML));
+                var mainbody = new XmlSerializer(typeof(MainBody));
+                using (var writer = new XmlTextWriter(stream, new UTF8Encoding(false))) {
+                    mainbody.Serialize(writer, data);
+                }
+                try {
+                    var http = new HttpClient();
+                    var request = new HttpRequestMessage(HttpMethod.Post, Endpoint + "/sms/send/otp") {
+                        Content = new StringContent(HttpUtility.HtmlDecode(Encoding.UTF8.GetString(stream.ToArray())), Encoding.UTF8, "text/xml")
+                    };
+                    var response = http.Send(request);
+                    var result = (XML)xml.Deserialize(response.Content.ReadAsStream());
+                    return result;
+                } catch (Exception err) {
+                    if (err.InnerException != null) {
+                        Console.WriteLine(err.InnerException.Message);
+                    } else {
+                        Console.WriteLine(err.Message);
+                    }
                 }
             }
             return null;
