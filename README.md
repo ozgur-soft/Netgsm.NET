@@ -15,6 +15,6 @@ using Netgsm;
 var netgsm = new Netgsm();
 netgsm.SetUsercode("api usercode");
 netgsm.SetPassword("api password");
-netgsm.Otp("message header", "phone number", "message"); // Sending OTP message
-netgsm.Sms("message header", "phone number", "message"); // Sending SMS message
+netgsm.Otp("header", "phone", "message"); // Sending OTP message
+netgsm.Sms("header", "phone", "message"); // Sending SMS message
 ```
