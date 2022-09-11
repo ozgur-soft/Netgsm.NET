@@ -5,7 +5,7 @@ An easy-to-use netgsm.com.tr API with .NET
 
 # Installation
 ```bash
-dotnet add package Netgsm --version 1.0.3
+dotnet add package Netgsm --version 1.0.4
 ```
 
 # Usage
@@ -15,6 +15,6 @@ using Netgsm;
 var netgsm = new Netgsm();
 netgsm.SetUsercode("api usercode");
 netgsm.SetPassword("api password");
-netgsm.Otp("header", "phone", "message"); // Sending OTP message
 netgsm.Sms("header", "phone", "message"); // Sending SMS message
+netgsm.Otp("header", "phone", "message"); // Sending OTP message
 ```
