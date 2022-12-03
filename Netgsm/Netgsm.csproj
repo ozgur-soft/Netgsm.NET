@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <Version>1.1.0</Version>
-    <RepositoryUrl>https://github.com/ozgur-soft/Netgsm.NET</RepositoryUrl>
+	<PropertyGroup>
+		<Version>1.1.0</Version>
+		<RepositoryUrl>https://github.com/ozgur-soft/Netgsm.NET</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Authors>Özgür Yalçın</Authors>
-    <Company>Özgürsoft</Company>
-    <Copyright>2022 Özgürsoft</Copyright>
+		<Authors>Özgür Yalçın</Authors>
+		<Company>Özgürsoft</Company>
+		<Copyright>2022 Özgürsoft</Copyright>
 		<Description>An easy-to-use netgsm.com.tr API with .NET</Description>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 </Project>
