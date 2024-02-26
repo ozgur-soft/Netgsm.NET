@@ -3,7 +3,7 @@ An easy-to-use netgsm.com.tr API with .NET
 
 # Installation
 ```bash
-dotnet add package Netgsm --version 1.1.0
+dotnet add package Netgsm --version 1.2.0
 ```
 
 # Usage
