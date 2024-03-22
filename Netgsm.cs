@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Headers;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Web;
@@ -119,31 +118,23 @@ namespace Netgsm {
             var mainbody = new XmlSerializer(typeof(MainBody));
             using var writer = new XmlTextWriter(stream, new UTF8Encoding(false));
             mainbody.Serialize(writer, data);
-            try {
-                using var http = new HttpClient();
-                using var request = new HttpRequestMessage(HttpMethod.Post, Endpoint + "/sms/send/xml") {
-                    Content = new StringContent(HttpUtility.HtmlDecode(Encoding.UTF8.GetString(stream.ToArray())), Encoding.UTF8, "text/xml")
-                };
-                using var response = http.Send(request);
-                using var content = response.Content.ReadAsStream();
-                using var reader = new StreamReader(content, Encoding.UTF8);
-                var result = reader.ReadToEnd();
-                var parse = result.Split(' ');
-                if (parse.Length == 2) {
-                    if (int.TryParse(parse[0], out var code)) {
-                        return new XML { Main = new() { Code = code, JobID = long.Parse(parse[1]) } };
-                    }
-                } else if (int.TryParse(result, out var code)) {
-                    return new XML { Main = new() { Code = code } };
+            using var http = new HttpClient();
+            using var request = new HttpRequestMessage(HttpMethod.Post, Endpoint + "/sms/send/xml") {
+                Content = new StringContent(HttpUtility.HtmlDecode(Encoding.UTF8.GetString(stream.ToArray())), Encoding.UTF8, "text/xml")
+            };
+            using var response = http.Send(request);
+            using var content = response.Content.ReadAsStream();
+            using var reader = new StreamReader(content, Encoding.UTF8);
+            var result = reader.ReadToEnd();
+            var parse = result.Split(' ');
+            if (parse.Length == 2) {
+                if (int.TryParse(parse[0], out var code)) {
+                    return new XML { Main = new() { Code = code, JobID = long.Parse(parse[1]) } };
                 }
-            } catch (Exception err) {
-                if (err.InnerException != null) {
-                    Console.WriteLine(err.InnerException.Message);
-                } else {
-                    Console.WriteLine(err.Message);
-                }
+            } else if (int.TryParse(result, out var code)) {
+                return new XML { Main = new() { Code = code } };
             }
-            return null;
+            throw new Exception(result);
         }
         public XML Otp(string header, string phone, string message) {
             var data = new MainBody {
@@ -162,43 +153,24 @@ namespace Netgsm {
             var mainbody = new XmlSerializer(typeof(MainBody));
             using var writer = new XmlTextWriter(stream, new UTF8Encoding(false));
             mainbody.Serialize(writer, data);
-            try {
-                using var http = new HttpClient();
-                using var request = new HttpRequestMessage(HttpMethod.Post, Endpoint + "/sms/send/otp") {
-                    Content = new StringContent(HttpUtility.HtmlDecode(Encoding.UTF8.GetString(stream.ToArray())), Encoding.UTF8, "text/xml")
-                };
-                using var response = http.Send(request);
-                var result = (XML)xml.Deserialize(response.Content.ReadAsStream());
-                return result;
-            } catch (Exception err) {
-                if (err.InnerException != null) {
-                    Console.WriteLine(err.InnerException.Message);
-                } else {
-                    Console.WriteLine(err.Message);
-                }
-            }
-            return null;
+            using var http = new HttpClient();
+            using var request = new HttpRequestMessage(HttpMethod.Post, Endpoint + "/sms/send/otp") {
+                Content = new StringContent(HttpUtility.HtmlDecode(Encoding.UTF8.GetString(stream.ToArray())), Encoding.UTF8, "text/xml")
+            };
+            using var response = http.Send(request);
+            var result = (XML)xml.Deserialize(response.Content.ReadAsStream());
+            return result;
         }
         public Results Balance() {
-            try {
-                var header = new Header { Usercode = Usercode, Password = Password, Appkey = Appkey, Stip = "1" };
-                using var http = new HttpClient();
-                using var request = new HttpRequestMessage(HttpMethod.Post, Endpoint + "/balance") {
-                    Content = new StringContent(JsonSerializer.Serialize(header, new JsonSerializerOptions { WriteIndented = false, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull }), Encoding.UTF8, "application/json")
-                };
-                using var response = http.Send(request);
-                using var stream = response.Content.ReadAsStream();
-                using var reader = new StreamReader(stream, Encoding.UTF8);
-                var results = JsonSerializer.Deserialize<Results>(reader.ReadToEnd());
-                return results;
-            } catch (Exception err) {
-                if (err.InnerException != null) {
-                    Console.WriteLine(err.InnerException.Message);
-                } else {
-                    Console.WriteLine(err.Message);
-                }
-            }
-            return null;
+            var header = new Header { Usercode = Usercode, Password = Password, Appkey = Appkey, Stip = "1" };
+            using var http = new HttpClient();
+            using var request = new HttpRequestMessage(HttpMethod.Post, Endpoint + "/balance") {
+                Content = new StringContent(JsonSerializer.Serialize(header, new JsonSerializerOptions { WriteIndented = false, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull }), Encoding.UTF8, "application/json")
+            };
+            using var response = http.Send(request);
+            using var stream = response.Content.ReadAsStream();
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+            return JsonSerializer.Deserialize<Results>(reader.ReadToEnd());
         }
     }
 }
